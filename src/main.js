@@ -143,6 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setupMobileDropdown();
   setupPDPABanner();
   updateStudentStatsDate();
+  setupScrollReveal();
+  setupActivityLightbox();
 });
 
 // Navigation Bar Scroll Effect & Active Link Highlight
@@ -1688,3 +1690,111 @@ function setupPDPABanner() {
     }, 400);
   });
 }
+
+// ==========================================================================
+// Scroll Reveal Animations (IntersectionObserver)
+// ==========================================================================
+function setupScrollReveal() {
+  const revealElements = document.querySelectorAll('.scroll-reveal, .about-section, .news-card, .admin-card, .vision-mission-cards');
+  
+  if (!revealElements || revealElements.length === 0) return;
+
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px 0px -50px 0px',
+    threshold: 0.15
+  };
+
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  revealElements.forEach(el => {
+    if (!el.classList.contains('scroll-reveal')) {
+      el.classList.add('scroll-reveal');
+    }
+    revealObserver.observe(el);
+  });
+}
+
+// ==========================================================================
+// Interactive Activity Lightbox Gallery
+// ==========================================================================
+function setupActivityLightbox() {
+  const lightbox = document.getElementById('image-lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxCaption = document.getElementById('lightbox-caption');
+  const closeBtn = document.getElementById('lightbox-close-btn');
+  const prevBtn = document.getElementById('lightbox-prev-btn');
+  const nextBtn = document.getElementById('lightbox-next-btn');
+
+  if (!lightbox || !lightboxImg) return;
+
+  let currentGalleryImages = [];
+  let currentImageIndex = 0;
+
+  function openLightbox(imagesList, index = 0) {
+    if (!imagesList || imagesList.length === 0) return;
+    currentGalleryImages = imagesList;
+    currentImageIndex = index;
+    updateLightboxContent();
+    lightbox.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  function updateLightboxContent() {
+    if (currentImageIndex < 0) currentImageIndex = currentGalleryImages.length - 1;
+    if (currentImageIndex >= currentGalleryImages.length) currentImageIndex = 0;
+
+    const currentData = currentGalleryImages[currentImageIndex];
+    const src = typeof currentData === 'string' ? currentData : currentData.src;
+    const caption = (typeof currentData === 'object' && currentData.caption) ? currentData.caption : 'ภาพกิจกรรม โรงเรียนบ้านดงกลาง (ธนาคารกรุงเทพ ๓๑)';
+
+    lightboxImg.src = src;
+    if (lightboxCaption) {
+      lightboxCaption.textContent = `${caption} (${currentImageIndex + 1}/${currentGalleryImages.length})`;
+    }
+  }
+
+  // Bind clicks on news card images & gallery images
+  document.addEventListener('click', (e) => {
+    const clickedImg = e.target.closest('.news-card img, .gallery-img, .about-desc img, .activity-photo');
+    if (clickedImg) {
+      e.preventDefault();
+      const allPageImages = Array.from(document.querySelectorAll('.news-card img, .gallery-img, .activity-photo'));
+      const imagesData = allPageImages.map(img => ({
+        src: img.src,
+        caption: img.alt || img.closest('.news-card')?.querySelector('.news-title')?.textContent || 'ภาพกิจกรรมโรงเรียน'
+      }));
+      const clickIdx = allPageImages.indexOf(clickedImg);
+      openLightbox(imagesData.length > 0 ? imagesData : [{ src: clickedImg.src, caption: clickedImg.alt }], clickIdx >= 0 ? clickIdx : 0);
+    }
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+  if (prevBtn) prevBtn.addEventListener('click', () => { currentImageIndex--; updateLightboxContent(); });
+  if (nextBtn) nextBtn.addEventListener('click', () => { currentImageIndex++; updateLightboxContent(); });
+
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (lightbox.style.display === 'flex') {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') { currentImageIndex--; updateLightboxContent(); }
+      if (e.key === 'ArrowRight') { currentImageIndex++; updateLightboxContent(); }
+    }
+  });
+}
+

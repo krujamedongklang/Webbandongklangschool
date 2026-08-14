@@ -301,25 +301,7 @@ function setupDepartmentModals() {
 
     let listHtml = '';
 
-    // Render PDF Manual FIRST at the top of the modal content
-    if (pdfTask) {
-      listHtml += `
-        <a href="${pdfTask.link}" target="_blank" rel="noopener noreferrer" class="pdf-top-card">
-          <div class="pdf-icon-wrapper">
-            <i class="fa-solid fa-file-pdf"></i>
-          </div>
-          <div class="pdf-info-text">
-            <h4>${pdfTask.name} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem;"></i></h4>
-            <p>${pdfTask.desc}</p>
-          </div>
-          <div class="pdf-download-badge">
-            <i class="fa-solid fa-download"></i> เปิดคู่มือ PDF
-          </div>
-        </a>
-      `;
-    }
-
-    // Render regular tasks below
+    // Render regular tasks in modal body
     regularTasks.forEach(task => {
       listHtml += `
         <div class="modal-list-item">

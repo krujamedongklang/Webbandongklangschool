@@ -270,6 +270,7 @@ function setupDepartmentModals() {
   const adminCards = document.querySelectorAll('.admin-card');
   const modal = document.getElementById('admin-modal');
   const closeBtn = modal.querySelector('.modal-close-btn');
+  const topPdfBtn = document.getElementById('modal-top-pdf-btn');
   const modalIconArea = modal.querySelector('.modal-icon-area');
   const modalTitle = modal.querySelector('.modal-title-text');
   const modalSubtitle = modal.querySelector('.modal-subtitle-text');
@@ -279,14 +280,24 @@ function setupDepartmentModals() {
     const data = adminDeptsData[deptKey];
     if (!data) return;
 
+    // Separate PDF manual task from regular tasks
+    const pdfTask = data.tasks.find(task => task.link);
+    const regularTasks = data.tasks.filter(task => !task.link);
+
+    // Populate Top Left PDF Button
+    if (topPdfBtn) {
+      if (pdfTask) {
+        topPdfBtn.href = pdfTask.link;
+        topPdfBtn.style.display = 'inline-flex';
+      } else {
+        topPdfBtn.style.display = 'none';
+      }
+    }
+
     // Populate modal contents
     modalIconArea.innerHTML = `<i class="fa-solid ${data.icon}"></i>`;
     modalTitle.textContent = data.title;
     modalSubtitle.textContent = data.subtitle;
-
-    // Separate PDF manual task from regular tasks
-    const pdfTask = data.tasks.find(task => task.link);
-    const regularTasks = data.tasks.filter(task => !task.link);
 
     let listHtml = '';
 

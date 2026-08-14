@@ -954,13 +954,14 @@ ul {
 .news-image-wrapper {
   position: relative;
   width: 100%;
+  height: 230px;
   overflow: hidden;
-  background-color: var(--gray-200);
+  background-color: var(--gray-100);
 }
 
 .news-image-placeholder {
   width: 100%;
-  height: 200px;
+  height: 100%;
   background: linear-gradient(135deg, var(--primary-red) 0%, var(--secondary-yellow) 100%);
   display: flex;
   align-items: center;
@@ -971,13 +972,15 @@ ul {
 
 .news-card-img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
   display: block;
   transition: var(--transition-smooth);
 }
 
 .news-card:hover .news-card-img {
-  transform: scale(1.03);
+  transform: scale(1.05);
 }
 
 .news-tag {

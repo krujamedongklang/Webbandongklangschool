@@ -1092,13 +1092,60 @@ async function setupMourningMode() {
   applyMourningMode(isEnabled);
 }
 
+let transparentRibbonCache = null;
+
+function makeBlackBgTransparent(base64Src, callback) {
+  const img = new Image();
+  img.crossOrigin = "Anonymous";
+  img.onload = () => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imgData.data;
+
+      // Make any black / dark gray background pixels (r,g,b < 65) 100% transparent
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        if (r < 65 && g < 65 && b < 65) {
+          data[i + 3] = 0; // Set Alpha = 0
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+      callback(canvas.toDataURL('image/png'));
+    } catch (err) {
+      console.warn("Could not strip black background via Canvas:", err);
+      callback(base64Src);
+    }
+  };
+  img.onerror = () => callback(base64Src);
+  img.src = base64Src;
+}
+
 function applyMourningMode(enabled) {
   const ribbon = document.getElementById('black-ribbon');
   if (enabled) {
     document.documentElement.classList.add('mourning-mode');
     if (ribbon) {
       const img = ribbon.querySelector('img');
-      if (img) img.src = RIBBON_IMAGE_SRC;
+      if (img) {
+        if (transparentRibbonCache) {
+          img.src = transparentRibbonCache;
+        } else {
+          img.src = RIBBON_IMAGE_SRC;
+          makeBlackBgTransparent(RIBBON_IMAGE_SRC, (cleanDataUrl) => {
+            transparentRibbonCache = cleanDataUrl;
+            img.src = cleanDataUrl;
+          });
+        }
+      }
       ribbon.style.display = 'block';
     }
   } else {

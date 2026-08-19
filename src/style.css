@@ -2478,7 +2478,11 @@ html.mourning-mode #admin-login-modal {
   left: 0;
   z-index: 999999;
   pointer-events: none;
-  filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.4));
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  filter: none !important;
   animation: fadeInRibbon 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
 }
 
@@ -2488,9 +2492,13 @@ html.mourning-mode #admin-login-modal {
 }
 
 .black-ribbon-img, .black-ribbon-svg {
-  width: 85px;
+  width: 75px;
   height: auto;
   display: block;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  mix-blend-mode: screen;
 }
 
 /* Toggle Switch Component for Admin Dashboard */

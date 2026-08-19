@@ -2475,10 +2475,10 @@ html.mourning-mode #admin-login-modal {
 .black-ribbon-wrap {
   position: fixed;
   top: 0;
-  left: 12px;
+  left: 0;
   z-index: 999999;
   pointer-events: none;
-  filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.5));
+  filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.4));
   animation: fadeInRibbon 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
 }
 
@@ -2488,7 +2488,7 @@ html.mourning-mode #admin-login-modal {
 }
 
 .black-ribbon-img, .black-ribbon-svg {
-  width: 78px;
+  width: 85px;
   height: auto;
   display: block;
 }

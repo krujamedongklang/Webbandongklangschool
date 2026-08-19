@@ -2492,7 +2492,7 @@ html.mourning-mode #admin-login-modal {
 }
 
 .black-ribbon-img, .black-ribbon-svg {
-  width: 68px;
+  width: 92px;
   height: auto;
   display: block;
   background: transparent !important;
@@ -2506,7 +2506,7 @@ html.mourning-mode #admin-login-modal {
     left: 12px;
   }
   .black-ribbon-img, .black-ribbon-svg {
-    width: 54px;
+    width: 70px;
   }
 }
 

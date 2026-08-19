@@ -2446,13 +2446,12 @@ html.mourning-mode .contact-section,
 html.mourning-mode .main-footer,
 html.mourning-mode .mobile-drawer,
 html.mourning-mode .modal-card,
-html.mourning-mode .pdpa-banner,
-html.mourning-mode .lightbox-overlay {
+html.mourning-mode .pdpa-banner {
   filter: grayscale(100%);
   -webkit-filter: grayscale(100%);
 }
 
-/* EXPLICIT EXCEPTIONS: Keep Director, Teachers, and News photos in FULL NATURAL COLOR */
+/* EXPLICIT EXCEPTIONS: Keep Director, Teachers, News, and Lightbox Modal photos in FULL NATURAL COLOR */
 html.mourning-mode img.director-avatar,
 html.mourning-mode .director-image-wrapper,
 html.mourning-mode .director-image-wrapper img,
@@ -2464,7 +2463,9 @@ html.mourning-mode .news-image-wrapper,
 html.mourning-mode .news-image-wrapper img,
 html.mourning-mode #news-modal-img,
 html.mourning-mode .news-modal-image-wrapper img,
+html.mourning-mode .lightbox-overlay,
 html.mourning-mode #lightbox-img,
+html.mourning-mode .lightbox-content img,
 html.mourning-mode #admin-badge-indicator,
 html.mourning-mode #admin-login-modal {
   filter: none !important;

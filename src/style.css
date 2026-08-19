@@ -2474,8 +2474,8 @@ html.mourning-mode #admin-login-modal {
 /* Black Ribbon Overlay at Top Left */
 .black-ribbon-wrap {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 16px;
+  left: 20px;
   z-index: 999999;
   pointer-events: none;
   background: transparent !important;
@@ -2492,13 +2492,22 @@ html.mourning-mode #admin-login-modal {
 }
 
 .black-ribbon-img, .black-ribbon-svg {
-  width: 75px;
+  width: 68px;
   height: auto;
   display: block;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  mix-blend-mode: screen;
+}
+
+@media (max-width: 768px) {
+  .black-ribbon-wrap {
+    top: 10px;
+    left: 12px;
+  }
+  .black-ribbon-img, .black-ribbon-svg {
+    width: 54px;
+  }
 }
 
 /* Toggle Switch Component for Admin Dashboard */

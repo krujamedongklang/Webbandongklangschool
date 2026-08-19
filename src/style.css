@@ -2623,3 +2623,11 @@ html.mourning-mode .logo-area {
   overflow: hidden;
 }
 
+/* Hide Lightbox Side Navigation Arrows */
+#lightbox-prev-btn,
+#lightbox-next-btn,
+.lightbox-prev-btn,
+.lightbox-next-btn {
+  display: none !important;
+}
+

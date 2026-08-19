@@ -1900,7 +1900,7 @@ function setupActivityLightbox() {
 
     lightboxImg.src = src;
     if (lightboxCaption) {
-      lightboxCaption.textContent = `${caption} (${currentImageIndex + 1}/${currentGalleryImages.length})`;
+      lightboxCaption.textContent = caption;
     }
   }
 

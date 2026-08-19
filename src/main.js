@@ -1,3 +1,5 @@
+import { RIBBON_IMAGE_SRC } from './ribbon-data.js';
+
 // ==========================================================================
 // 1. Initialize Supabase Client with Fallback & Local configuration support
 // ==========================================================================
@@ -1094,7 +1096,11 @@ function applyMourningMode(enabled) {
   const ribbon = document.getElementById('black-ribbon');
   if (enabled) {
     document.documentElement.classList.add('mourning-mode');
-    if (ribbon) ribbon.style.display = 'block';
+    if (ribbon) {
+      const img = ribbon.querySelector('img');
+      if (img) img.src = RIBBON_IMAGE_SRC;
+      ribbon.style.display = 'block';
+    }
   } else {
     document.documentElement.classList.remove('mourning-mode');
     if (ribbon) ribbon.style.display = 'none';

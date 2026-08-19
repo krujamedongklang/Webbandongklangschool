@@ -2487,7 +2487,7 @@ html.mourning-mode #admin-login-modal {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.black-ribbon-img {
+.black-ribbon-img, .black-ribbon-svg {
   width: 78px;
   height: auto;
   display: block;

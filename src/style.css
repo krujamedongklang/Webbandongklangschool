@@ -2623,28 +2623,3 @@ html.mourning-mode .logo-area {
   overflow: hidden;
 }
 
-.teacher-avatar-container::after {
-  content: "🔍 คลิกดูรูปขยายชัด";
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%) translateY(12px);
-  background: rgba(168, 30, 46, 0.9);
-  color: var(--white);
-  font-family: var(--font-prompt);
-  font-size: 0.72rem;
-  font-weight: 500;
-  padding: 3px 10px;
-  border-radius: 20px;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-.teacher-avatar-container:hover::after {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-

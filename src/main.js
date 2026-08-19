@@ -145,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateStudentStatsDate();
   setupScrollReveal();
   setupActivityLightbox();
+  setupMourningMode();
 });
 
 // Navigation Bar Scroll Effect & Active Link Highlight
@@ -1012,8 +1013,10 @@ function loginAdmin() {
   const addNewsBtnContainer = document.getElementById('admin-news-btn-container');
   if (addNewsBtnContainer) addNewsBtnContainer.style.display = 'block';
 
-  // Add the green floating badge indicator
+  // Add the green floating badge indicator with Mourning Mode Toggle
   let badge = document.getElementById('admin-badge-indicator');
+  const isMourning = document.documentElement.classList.contains('mourning-mode');
+  
   if (!badge) {
     badge = document.createElement('div');
     badge.id = 'admin-badge-indicator';
@@ -1021,19 +1024,96 @@ function loginAdmin() {
     badge.innerHTML = `
       <i class="fa-solid fa-unlock-keyhole"></i> 
       <span>ระบบจัดการข้อมูล (Active)</span>
+      <div class="admin-mourning-toggle-item" title="เปิด/ปิด โทนสีไว้อาลัย">
+        <span>🖤 โหมดไว้อาลัย:</span>
+        <label class="switch-toggle">
+          <input type="checkbox" id="mourning-mode-toggle" ${isMourning ? 'checked' : ''}>
+          <span class="slider round"></span>
+        </label>
+      </div>
       <button class="btn-logout" id="admin-logout-btn">ออกจากระบบ</button>
     `;
     document.body.appendChild(badge);
     
     // Setup logout click
     document.getElementById('admin-logout-btn').addEventListener('click', logoutAdmin);
+
+    // Setup mourning mode toggle click
+    const mourningToggle = document.getElementById('mourning-mode-toggle');
+    if (mourningToggle) {
+      mourningToggle.addEventListener('change', (e) => {
+        setMourningMode(e.target.checked);
+      });
+    }
   } else {
     badge.style.display = 'flex';
+    const mourningToggle = document.getElementById('mourning-mode-toggle');
+    if (mourningToggle) {
+      mourningToggle.checked = isMourning;
+    }
   }
 
   // Refresh views to display card actions
   fetchAndRenderTeachers();
   renderNews(allNewsData);
+}
+
+// ==========================================================================
+// 8. Mourning Mode Setup & Controls (โหมดสีไว้อาลัยขาว-ดำสุภาพ)
+// ==========================================================================
+async function setupMourningMode() {
+  let isEnabled = false;
+
+  // 1. Read from localStorage
+  const localSaved = localStorage.getItem('mourning_mode_enabled');
+  if (localSaved !== null) {
+    isEnabled = localSaved === 'true';
+  }
+
+  // 2. Fetch from Supabase site_settings if configured
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('setting_value')
+        .eq('setting_key', 'mourning_mode_enabled')
+        .single();
+      if (!error && data) {
+        isEnabled = data.setting_value === 'true';
+        localStorage.setItem('mourning_mode_enabled', isEnabled ? 'true' : 'false');
+      }
+    } catch (e) {
+      console.warn("Could not fetch mourning mode status from Supabase site_settings:", e);
+    }
+  }
+
+  applyMourningMode(isEnabled);
+}
+
+function applyMourningMode(enabled) {
+  const ribbon = document.getElementById('black-ribbon');
+  if (enabled) {
+    document.documentElement.classList.add('mourning-mode');
+    if (ribbon) ribbon.style.display = 'block';
+  } else {
+    document.documentElement.classList.remove('mourning-mode');
+    if (ribbon) ribbon.style.display = 'none';
+  }
+}
+
+async function setMourningMode(enabled) {
+  applyMourningMode(enabled);
+  localStorage.setItem('mourning_mode_enabled', enabled ? 'true' : 'false');
+
+  if (supabase) {
+    try {
+      await supabase
+        .from('site_settings')
+        .upsert([{ setting_key: 'mourning_mode_enabled', setting_value: enabled ? 'true' : 'false' }]);
+    } catch (e) {
+      console.warn("Could not save mourning mode status to Supabase:", e);
+    }
+  }
 }
 
 // Helper to logout Admin Mode

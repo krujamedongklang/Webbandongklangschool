@@ -2471,12 +2471,24 @@ html.mourning-mode #admin-login-modal {
   -webkit-filter: none !important;
 }
 
-/* Black Ribbon Overlay at Top Left */
+/* Container positioning for header ribbon */
+.header-container {
+  position: relative;
+}
+
+/* Shift logo area smoothly to the right when mourning mode is active */
+html.mourning-mode .logo-area {
+  margin-left: 92px;
+  transition: var(--transition-smooth);
+}
+
+/* Black Ribbon Overlay vertically centered in header bar */
 .black-ribbon-wrap {
-  position: fixed;
-  top: 16px;
-  left: 20px;
-  z-index: 999999;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 1001;
   pointer-events: none;
   background: transparent !important;
   border: none !important;
@@ -2487,26 +2499,35 @@ html.mourning-mode #admin-login-modal {
 }
 
 @keyframes fadeInRibbon {
-  from { opacity: 0; transform: translateY(-15px) scale(0.9); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(-50%) scale(0.9); }
+  to { opacity: 1; transform: translateY(-50%) scale(1); }
 }
 
 .black-ribbon-img, .black-ribbon-svg {
-  width: 92px;
+  width: 80px;
   height: auto;
   display: block;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
+  transition: var(--transition-smooth);
+}
+
+.main-header.scrolled .black-ribbon-img,
+.main-header.scrolled .black-ribbon-svg {
+  width: 68px;
 }
 
 @media (max-width: 768px) {
-  .black-ribbon-wrap {
-    top: 10px;
-    left: 12px;
+  html.mourning-mode .logo-area {
+    margin-left: 66px;
   }
   .black-ribbon-img, .black-ribbon-svg {
-    width: 70px;
+    width: 58px;
+  }
+  .main-header.scrolled .black-ribbon-img,
+  .main-header.scrolled .black-ribbon-svg {
+    width: 50px;
   }
 }
 

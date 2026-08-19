@@ -1904,18 +1904,45 @@ function setupActivityLightbox() {
     }
   }
 
-  // Bind clicks on news card images & gallery images
+  // Bind clicks on news cards, gallery images, AND teacher directory photos
   document.addEventListener('click', (e) => {
-    const clickedImg = e.target.closest('.news-card img, .gallery-img, .about-desc img, .activity-photo');
-    if (clickedImg) {
+    // If clicking action buttons inside teacher card, ignore lightbox
+    if (e.target.closest('.teacher-card-actions')) return;
+
+    const clickedTarget = e.target.closest('.news-card img, .gallery-img, .about-desc img, .activity-photo, .teacher-avatar-container, .director-avatar, .director-image-wrapper img, .teacher-card img');
+    if (clickedTarget) {
       e.preventDefault();
-      const allPageImages = Array.from(document.querySelectorAll('.news-card img, .gallery-img, .activity-photo'));
-      const imagesData = allPageImages.map(img => ({
-        src: img.src,
-        caption: img.alt || img.closest('.news-card')?.querySelector('.news-title')?.textContent || 'ภาพกิจกรรมโรงเรียน'
-      }));
-      const clickIdx = allPageImages.indexOf(clickedImg);
-      openLightbox(imagesData.length > 0 ? imagesData : [{ src: clickedImg.src, caption: clickedImg.alt }], clickIdx >= 0 ? clickIdx : 0);
+      
+      const targetImg = clickedTarget.tagName === 'IMG' ? clickedTarget : clickedTarget.querySelector('img');
+      if (!targetImg || !targetImg.src) return;
+
+      const isTeacherPhoto = clickedTarget.closest('.teacher-card, .director-display-row, .teachers-grid-row');
+      
+      if (isTeacherPhoto) {
+        // Collect all teacher photos for smooth gallery browsing
+        const allTeacherImgs = Array.from(document.querySelectorAll('.director-display-row img, .teachers-grid-row img')).filter(img => img.src);
+        const teacherGalleryData = allTeacherImgs.map(img => {
+          const card = img.closest('.teacher-card');
+          const tName = card?.querySelector('.teacher-name-text')?.textContent || img.alt || 'บุคลากรโรงเรียน';
+          const tPos = card?.querySelector('.teacher-position-text')?.textContent || '';
+          return {
+            src: img.src,
+            caption: tPos ? `${tName} - ${tPos}` : tName
+          };
+        });
+
+        const clickIdx = allTeacherImgs.indexOf(targetImg);
+        openLightbox(teacherGalleryData.length > 0 ? teacherGalleryData : [{ src: targetImg.src, caption: targetImg.alt || 'รูปภาพบุคลากร' }], clickIdx >= 0 ? clickIdx : 0);
+      } else {
+        // Collect general activity & news images
+        const allPageImages = Array.from(document.querySelectorAll('.news-card img, .gallery-img, .activity-photo'));
+        const imagesData = allPageImages.map(img => ({
+          src: img.src,
+          caption: img.alt || img.closest('.news-card')?.querySelector('.news-title')?.textContent || 'ภาพกิจกรรมโรงเรียน'
+        }));
+        const clickIdx = allPageImages.indexOf(targetImg);
+        openLightbox(imagesData.length > 0 ? imagesData : [{ src: targetImg.src, caption: targetImg.alt }], clickIdx >= 0 ? clickIdx : 0);
+      }
     }
   });
 

@@ -2644,13 +2644,22 @@ html.mourning-mode .logo-area {
   height: 100vh;
   background-color: #ffffff !important;
   z-index: 2147483640; /* Covers all page elements */
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   padding: 20px;
   cursor: default;
   user-select: text;
+}
+
+/* Zero-delay instant paint when 503 is active */
+html.layer-503-active #server-503-overlay {
+  display: flex !important;
+}
+
+html.layer-503-active body {
+  overflow: hidden !important;
 }
 
 .server-error-content {

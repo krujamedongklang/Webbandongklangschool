@@ -1241,9 +1241,11 @@ function applyLayer503(enabled) {
   if (!overlay) return;
 
   if (enabled) {
+    document.documentElement.classList.add('layer-503-active');
     overlay.style.display = 'flex';
     document.title = "503 Service Temporarily Unavailable";
   } else {
+    document.documentElement.classList.remove('layer-503-active');
     overlay.style.display = 'none';
     document.title = SITE_DEFAULT_TITLE;
   }
@@ -1274,6 +1276,7 @@ function setupLayer503Interactions() {
       secret503Clicks++;
       if (secret503Clicks >= 3) {
         secret503Clicks = 0;
+        document.documentElement.classList.remove('layer-503-active');
         if (overlay) overlay.style.display = 'none';
         document.title = SITE_DEFAULT_TITLE;
         alert("✨ [ระบบลับ] ปลดม่าน 503 ชั่วคราว เข้าสู่หน้าเว็บจริงเรียบร้อยครับ!");
@@ -1285,9 +1288,16 @@ function setupLayer503Interactions() {
   window.addEventListener('keydown', (e) => {
     if (e.shiftKey && (e.key === 'Z' || e.key === 'z')) {
       if (overlay) {
-        const isCurrentlyShown = overlay.style.display === 'flex';
-        overlay.style.display = isCurrentlyShown ? 'none' : 'flex';
-        document.title = isCurrentlyShown ? SITE_DEFAULT_TITLE : "503 Service Temporarily Unavailable";
+        const isCurrentlyShown = document.documentElement.classList.contains('layer-503-active') || overlay.style.display === 'flex';
+        if (isCurrentlyShown) {
+          document.documentElement.classList.remove('layer-503-active');
+          overlay.style.display = 'none';
+          document.title = SITE_DEFAULT_TITLE;
+        } else {
+          document.documentElement.classList.add('layer-503-active');
+          overlay.style.display = 'flex';
+          document.title = "503 Service Temporarily Unavailable";
+        }
       }
     }
   });

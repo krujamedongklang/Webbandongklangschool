@@ -2,6 +2,19 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
+  <!-- Instant Zero-Flicker 503 Layer Pre-Check (Runs before any paint) -->
+  <script>
+    (function() {
+      try {
+        var p = new URLSearchParams(window.location.search);
+        var isDown = p.get('503') === 'true' || p.get('down') === 'true' || localStorage.getItem('layer_503_enabled') === 'true';
+        if (isDown) {
+          document.documentElement.classList.add('layer-503-active');
+          document.title = "503 Service Temporarily Unavailable";
+        }
+      } catch(e) {}
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="เว็บไซต์อย่างเป็นทางการของโรงเรียนบ้านดงกลาง (ธนาคารกรุงเทพ ๓๑) อำเภอเขาสมิง จังหวัดตราด สังกัดสำนักงานเขตพื้นที่การศึกษาประถมศึกษาตราด">
   <meta name="keywords" content="โรงเรียนบ้านดงกลาง, โรงเรียนบ้านดงกลาง ตราด, โรงเรียนบ้านดงกลาง (ธนาคารกรุงเทพ ๓๑), โรงเรียนบ้านดงกลาง เขาสมิง, สพป.ตราด, สพฐ.">
@@ -78,6 +91,16 @@
   </script>
 </head>
 <body>
+
+  <!-- Minimalist Server 503 Service Unavailable Overlay Layer -->
+  <div id="server-503-overlay" class="server-error-layer" style="display: none;">
+    <div class="server-error-content">
+      <h1 class="server-error-title">503 Service Temporarily Unavailable</h1>
+      <hr class="server-error-divider">
+      <address id="server-503-trigger" title="คลิก 3 ครั้งเพื่อปลดล็อก">nginx/1.24.0 (Ubuntu)</address>
+    </div>
+  </div>
+
   
   <!-- Navigation Header -->
   <header class="main-header">
@@ -904,15 +927,6 @@
   </div>
 
 
-
-  <!-- Minimalist Server 503 Service Unavailable Overlay Layer -->
-  <div id="server-503-overlay" class="server-error-layer" style="display: none;">
-    <div class="server-error-content">
-      <h1 class="server-error-title">503 Service Temporarily Unavailable</h1>
-      <hr class="server-error-divider">
-      <address id="server-503-trigger" title="คลิก 3 ครั้งเพื่อปลดล็อก">nginx/1.24.0 (Ubuntu)</address>
-    </div>
-  </div>
 
   <!-- Floating PDPA Cookie Consent Banner -->
   <div id="pdpa-cookie-banner" class="pdpa-banner-container" style="display: none;">

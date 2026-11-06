@@ -2631,3 +2631,79 @@ html.mourning-mode .logo-area {
   display: none !important;
 }
 
+
+
+/* ==========================================================================
+   Minimalist Server 503 Service Unavailable Overlay Layer (Style A)
+   ========================================================================== */
+.server-error-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff !important;
+  z-index: 2147483640; /* Covers all page elements */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px;
+  cursor: default;
+  user-select: text;
+}
+
+.server-error-content {
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #000000;
+  max-width: 650px;
+  width: 100%;
+}
+
+.server-error-title {
+  font-size: 2.1rem;
+  font-weight: 500;
+  margin: 0 0 16px 0;
+  color: #000000;
+  letter-spacing: -0.3px;
+}
+
+.server-error-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 16px auto;
+  width: 100%;
+}
+
+.server-error-content address {
+  font-style: normal;
+  font-size: 0.95rem;
+  color: #333333;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Ensure Admin floating bar stays above the overlay layer */
+#admin-badge-indicator {
+  z-index: 2147483647 !important;
+}
+
+.admin-503-toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  margin: 0 6px;
+}
+
+.admin-503-toggle-item span {
+  font-size: 0.8rem;
+  color: var(--white);
+  font-family: var(--font-prompt);
+  font-weight: 500;
+  white-space: nowrap;
+}

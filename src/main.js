@@ -148,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupScrollReveal();
   setupActivityLightbox();
   setupMourningMode();
+  setupLayer503();
 });
 
 // Navigation Bar Scroll Effect & Active Link Highlight
@@ -1033,6 +1034,13 @@ function loginAdmin() {
           <span class="slider round"></span>
         </label>
       </div>
+      <div class="admin-503-toggle-item" title="เปิด/ปิด เลเยอร์เว็บล่ม (503 Service Unavailable)">
+        <span>⚠️ เลเยอร์ 503:</span>
+        <label class="switch-toggle">
+          <input type="checkbox" id="layer-503-toggle" ${isLayer503Active ? 'checked' : ''}>
+          <span class="slider round"></span>
+        </label>
+      </div>
       <button class="btn-logout" id="admin-logout-btn">ออกจากระบบ</button>
     `;
     document.body.appendChild(badge);
@@ -1047,11 +1055,23 @@ function loginAdmin() {
         setMourningMode(e.target.checked);
       });
     }
+
+    // Setup 503 layer toggle click
+    const layerToggle = document.getElementById('layer-503-toggle');
+    if (layerToggle) {
+      layerToggle.addEventListener('change', (e) => {
+        setLayer503(e.target.checked);
+      });
+    }
   } else {
     badge.style.display = 'flex';
     const mourningToggle = document.getElementById('mourning-mode-toggle');
     if (mourningToggle) {
       mourningToggle.checked = isMourning;
+    }
+    const layerToggle = document.getElementById('layer-503-toggle');
+    if (layerToggle) {
+      layerToggle.checked = isLayer503Active;
     }
   }
 
@@ -1167,6 +1187,110 @@ async function setMourningMode(enabled) {
       console.warn("Could not save mourning mode status to Supabase:", e);
     }
   }
+}
+
+// ==========================================================================
+// 8.2 Minimalist Server 503 Layer (เลเยอร์หน้าเซิร์ฟเวอร์ล่มสไตล์ Nginx)
+// ==========================================================================
+let isLayer503Active = false;
+let secret503Clicks = 0;
+const SITE_DEFAULT_TITLE = "โรงเรียนบ้านดงกลาง (ธนาคารกรุงเทพ ๓๑)";
+
+async function setupLayer503() {
+  let isEnabled = false;
+
+  // 1. URL Parameter check: ?503=true or ?down=true for instant testing
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('503') === 'true' || params.get('down') === 'true') {
+    isEnabled = true;
+  }
+
+  // 2. Read from localStorage if not forced via URL
+  if (!isEnabled) {
+    const localSaved = localStorage.getItem('layer_503_enabled');
+    if (localSaved !== null) {
+      isEnabled = localSaved === 'true';
+    }
+  }
+
+  // 3. Query global setting from Supabase
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('setting_value')
+        .eq('setting_key', 'layer_503_enabled')
+        .single();
+      
+      if (!error && data) {
+        isEnabled = data.setting_value === 'true';
+        localStorage.setItem('layer_503_enabled', isEnabled ? 'true' : 'false');
+      }
+    } catch (e) {
+      console.warn("Could not query layer_503_enabled from Supabase:", e);
+    }
+  }
+
+  applyLayer503(isEnabled);
+  setupLayer503Interactions();
+}
+
+function applyLayer503(enabled) {
+  isLayer503Active = enabled;
+  const overlay = document.getElementById('server-503-overlay');
+  if (!overlay) return;
+
+  if (enabled) {
+    overlay.style.display = 'flex';
+    document.title = "503 Service Temporarily Unavailable";
+  } else {
+    overlay.style.display = 'none';
+    document.title = SITE_DEFAULT_TITLE;
+  }
+}
+
+async function setLayer503(enabled) {
+  applyLayer503(enabled);
+  localStorage.setItem('layer_503_enabled', enabled ? 'true' : 'false');
+
+  if (supabase) {
+    try {
+      await supabase
+        .from('site_settings')
+        .upsert([{ setting_key: 'layer_503_enabled', setting_value: enabled ? 'true' : 'false' }]);
+    } catch (e) {
+      console.warn("Could not save layer_503_enabled to Supabase:", e);
+    }
+  }
+}
+
+function setupLayer503Interactions() {
+  const trigger = document.getElementById('server-503-trigger');
+  const overlay = document.getElementById('server-503-overlay');
+
+  // Secret: Click 'nginx/1.24.0 (Ubuntu)' 3 times to temporarily dismiss the layer!
+  if (trigger) {
+    trigger.addEventListener('click', () => {
+      secret503Clicks++;
+      if (secret503Clicks >= 3) {
+        secret503Clicks = 0;
+        if (overlay) overlay.style.display = 'none';
+        document.title = SITE_DEFAULT_TITLE;
+        alert("✨ [ระบบลับ] ปลดม่าน 503 ชั่วคราว เข้าสู่หน้าเว็บจริงเรียบร้อยครับ!");
+      }
+    });
+  }
+
+  // Secret: Press Shift + Z on keyboard to toggle/dismiss layer
+  window.addEventListener('keydown', (e) => {
+    if (e.shiftKey && (e.key === 'Z' || e.key === 'z')) {
+      if (overlay) {
+        const isCurrentlyShown = overlay.style.display === 'flex';
+        overlay.style.display = isCurrentlyShown ? 'none' : 'flex';
+        document.title = isCurrentlyShown ? SITE_DEFAULT_TITLE : "503 Service Temporarily Unavailable";
+      }
+    }
+  });
 }
 
 // Helper to logout Admin Mode
